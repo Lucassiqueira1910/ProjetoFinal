@@ -15,16 +15,16 @@ using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔥 FORÇA CAMINHO DA RAIZ (NÃO USA MAIS /bin)
+
 var projectRoot = Directory.GetParent(Directory.GetCurrentDirectory())!
     .Parent!.Parent!.FullName;
 
 var logPath = Path.Combine(projectRoot, "logs", "log.txt");
 
-// 🔥 CRIA PASTA logs NA RAIZ
+// log
 Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
 
-// 🔥 CONFIG SERILOG
+
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .Enrich.FromLogContext()
@@ -32,11 +32,11 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-// 🔥 ATIVA SERILOG
+
 builder.Host.UseSerilog();
 
 
-// 🔥 OPEN TELEMETRY
+// TELEMETRiA
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracing =>
     {
@@ -54,11 +54,10 @@ builder.Services.AddOpenTelemetry()
     });
 
 
-// 🔹 Controllers
+// SWAGGER
 builder.Services.AddControllers();
 
 
-// 🔹 Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -70,15 +69,12 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-// 🔹 Services
 builder.Services.AddProjectServices(builder.Configuration);
 
 
-// 🔥 CONNECTION STRING
 var connString = File.ReadAllText("connection.txt").Trim();
 
-
-// 🔥 HEALTH CHECKS
+// HEALTH CHECKS
 builder.Services.AddHealthChecks()
     .AddOracle(connString,
         name: "oracle-db",
@@ -97,12 +93,9 @@ builder.Services.AddHealthChecks()
 
 var app = builder.Build();
 
-
-// 🔹 Middleware
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 
-// 🔹 Swagger
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -110,12 +103,10 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = "swagger";
 });
 
-
 app.UseRouting();
 app.UseAuthorization();
 
 
-// 🔥 CORRELAÇÃO DE REQUEST
 app.Use(async (context, next) =>
 {
     var requestId = Guid.NewGuid().ToString();
@@ -127,11 +118,9 @@ app.Use(async (context, next) =>
 });
 
 
-// 🔹 Controllers
 app.MapControllers();
 
-
-// 🔥 HEALTH ENDPOINTS
+// HEALTH ENDPOINTS
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
     Predicate = _ => true,
