@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="./IMAGES/dcdc62c9-1980-4270-8044-fafc00910824.png" width="180" />
-</p>
+
 
 <h1 align="center">USUARIOMinimalSolution</h1>
 
@@ -265,7 +263,6 @@ curl -X DELETE "http://localhost:5229/api/Usuario/1"
 
 👨‍💻 Autor
 
-Lucas Siqueira — SENSE WORK
+Lucas Siqueira — 
 Projeto acadêmico desenvolvido com padrões profissionais, arquitetura limpa e boas práticas modernas.
 
-<p align="center"> <img src="./IMAGES/dcdc62c9-1980-4270-8044-fafc00910824.png" width="180"> </p>
